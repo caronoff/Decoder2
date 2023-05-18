@@ -16,7 +16,6 @@ from bchcorrect import bch_check, bch_recalc, bch1_binarycalc, bch2_binarycalc
 import re, uuid
 import os, json #, boto3
 import contacts
-
 import typeapproval
 import decodehex2
 import definitions
