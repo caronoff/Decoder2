@@ -1,0 +1,233 @@
+{% extends "layout.html" %}
+{% block title %}Decoded Beacon{% endblock %}
+{% block head %}
+  {{ super() }}
+<!-- Custom styles for this template -->
+    <link href="{{ url_for('static', filename='css/custom.css') }}" rel="stylesheet">
+    <link href='https://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
+
+<style media="screen" type="text/css">
+     table {
+     width:100%;
+     }
+     td {
+       max-width: 0;
+     }
+     td.columnA {
+     width:10%
+     }
+     td.columnB {
+     width:15%;
+       overflow:hidden;
+       overflow-wrap:break-word;
+       word-wrap: break-word;
+     }
+     td.columnC {
+     width:35%
+     }
+     td.columnD {
+     width:40%
+     }
++ </style>
+
+{% endblock %}
+
+ {% block content %}
+    <div id="decodetable">
+  <h2>Decoded Beacon Message</h2>
+  <p>Hexadecimal code: <strong style="word-wrap:break-word"> {{hexcode}} </strong></p>
+        <p>{{genmsg}}</p>
+
+        {% if errors %}
+          <div class="alert alert-danger" >
+              <p> Unique identifier: <br>{{uin}} </p>
+              <ul>
+        {% for e in errors %}
+            <li> <strong>{{e}} </strong>
+
+        {% endfor %}
+                  </ul>
+          </div>
+        {% else %}
+         <p> Unique identifier:  <br> {{uin}}</p>
+        {% endif %}
+
+        {% if warnings %}
+          <div class="alert alert-warning" >
+
+              <ul>
+        {% for e in warnings %}
+            <li> <strong>{{e}} </strong>
+
+        {% endfor %}
+                  </ul>
+              </div>
+              {% endif %}
+
+</p>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Binary Range</th>
+        <th>Binary Content</th>
+        <th>Field Name</th>
+		<th>Decoded Value</th>
+      </tr>
+    </thead>
+    <tbody>
+{% for item in decoded %}
+      <tr>
+        <td class="columnA"> {{ item[0] }} </td>
+		<td class="columnB">{{ item[1] }} </td>
+		<td class="columnC">
+            {% if item[4] %}<a href="#" data-toggle="modal" data-target="#{{item[4][0]}}">{{ item[2] }}</a>
+            <!-- modal instructions -->
+                <div class="modal fade" id="{{item[4][0]}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+                  <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle"><strong>{{ item[2] }}</strong></h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+{% autoescape False %} {{item[4][1]}}{% endautoescape %}
+                      <div class="modal-footer"><button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button></div>
+                      </div>
+                  </div>
+                </div>
+                </div>
+            {% else %}   {{ item[2] }}
+            {% endif %}
+
+        </td>
+<td class="columnD">{% autoescape False %}{{ item[3] }}{% endautoescape %}
+{% if item[2]== 'Country code:' and showmenu %}<!-- Button trigger modal -->
+    <button type="button" class="btn btn-xs btn-primary" data-toggle="modal" data-target="#ContactModalLong">?</button>
+{% elif 'Type Approval' in item[2] and showmenu %}{{ item[3] }}<!-- Button trigger modal -->
+    <button type="button" class="btn btn-xs btn-primary" data-toggle="modal" data-target="#TaModalLong">?</button>
+{% endif %}
+</td>
+</tr>
+{% endfor %}
+    </tbody>
+  </table>
+        <div class="btn-toolbar">
+        <a href="/decode" class="btn btn-danger"  style="margin-top: auto ; display:block; text-align: center">
+          <span class="glyphicon glyphicon-home" style="color:gray"></span> Return
+        </a>
+            {% if showmenu %}
+            <a href="/bch/{{hexcode}}" class="btn btn--default"  style="margin-top: auto ; display:block; text-align: center">
+          <span class="glyphicon glyphicon-star" style="color:gray"></span> Save BCH
+        </a>
+            {% endif %}
+</div>
+  {% if locationcheck %}
+        <p>Encoded location</p>
+                <div id="geocoord"  data-geocode="{{ geocoord|tojson }}"></div>
+                <div id="marker" data-marker= "{{url_for('static', filename='css/images/marker.png')}}"></div>
+    <div id="map"></div>
+        <div class="row">
+  <div class="col col-md-6">Lat: {{ geocoord[0]}}  Long: {{ geocoord[1]}}</div>
+  <div class="col-6 col-md-6"></div>
+    </div>
+  {% endif %}
+</div>
+
+<!-- Modal contact-->
+<div class="modal fade" id="ContactModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Points of Contact</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          <div role="tabpanel">
+                    <!-- Nav tabs -->
+                    <ul class="nav nav-tabs" role="tablist">
+                         {% for btype in types %}
+                        <li role="presentation" class="{% if loop.index==1 %}active{% endif %}"><a href="#{{btype}}" aria-controls="{{btype}}" role="tab" data-toggle="tab">{{btype}}</a>
+                        </li>
+                         {% endfor %}
+                    </ul>
+                    <!-- Tab panes -->
+                    <div class="tab-content">
+                        {% for btype in types %}
+                        <div role="tabpanel" class="tab-pane {% if loop.index==1 %}active{% endif %}" id="{{btype}}"><strong>Beacon Registration Contact - {{btype}}</strong>
+
+                                <div style="overflow: auto">
+                                          <table  class="table table-hover">{% for f in flds %}
+                                   <tr><td width="30%"> <u>{{ f[0] }}</u> </td>
+                                        <td width="70%"> {{ contact[btype][f[1]] }} </td>
+                                   </tr>{% endfor %} </table>
+                                </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal tac -->
+<div class="modal fade" id="TaModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle"><strong>Type Approval {{tac}}</strong></h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+
+
+      {% if tacdetail|length > 0 %}
+           <div role="tabpanel">
+                    <!-- Nav tabs -->
+                    <ul class="nav nav-tabs" role="tablist">
+                         {% for tac in tacdetail %}
+                        <li role="presentation" class="{% if loop.index==1 %}active{% endif %}"><a href="#{{tac}}" aria-controls="{{tac}}" role="tab" data-toggle="tab">{{tac}} </a>
+                        </li>
+                         {% endfor %}
+                    </ul>
+                    <!-- Tab panes -->
+                    <div class="tab-content">
+                        {% for tac in tacdetail %}
+                        <div role="tabpanel" class="tab-pane {% if loop.index==1 %} active{% endif %}" id="{{tac}}"><strong>Beacon model - {{tacdetail[tac]['name']}}</strong>
+                                <div style="overflow: auto">
+                                          <table  class="table table-hover">{% for f in tacflds %}
+                                   <tr><td width="30%"> <u>{{ f[0] }}</u> </td>
+                                       <td width="70%"> {{ tacdetail[tac][f[1]]}} </td>
+                                   </tr>{% endfor %} </table>
+                                </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+          </div>
+      {% endif %}
+
+
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+{% endblock %}
+{% block scripts %}
+{{super()}}
+<script type=text/javascript src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+<script src="{{ url_for('static', filename='js/gmap.js') }}"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=&callback=initMap" async defer></script>
+<script src="https://maps.googleapis.com/maps/api/js?key={{gmap_key}}&callback=initMap" async defer></script>
+{% endblock %}
