@@ -11,8 +11,7 @@ from decodefunctions import is_number, dec2bin
 #from flask_migrate import Migrate
 from flask_login import LoginManager, UserMixin, login_required, login_user, logout_user, current_user
 from bchcorrect import bch_check, bch_recalc, bch1_binarycalc, bch2_binarycalc
-#from botocore.errorfactory import ClientError
-#import crcmod.predefined
+
 import re, uuid
 import os, json #, boto3
 import contacts
