@@ -16,7 +16,6 @@ requests==2.30.0
 alembic==1.0.10
 psycopg2==2.9.6
 urllib3==1.25.4
-Flask-SQLAlchemy==2.5.1
-SQLAlchemy==1.4.44
+
 boto3==1.18.53
 bchlibcaronoff==1.0.4
