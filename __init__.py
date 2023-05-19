@@ -33,9 +33,9 @@ gmap_key = os.getenv('GMAP_KEY', 'Optional default value')
 #app.config['SQLALCHEMY_DATABASE_URI'] =  os.environ['DATABASE_URL']
 #db = SQLAlchemy(app)
 #migrate = Migrate(app, db)
-#login_manager = LoginManager()
-#login_manager.init_app(app)
-#login_manager.login_view = 'login'
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
 
 
 MENU = False
@@ -120,10 +120,9 @@ class RegistrationForm(Form):
         if user is not None:
             raise ValidationError('Please use a different email address.')
 
-
 @login_manager.user_loader
 def load_user(user_id):
-    return Userlogin.query.filter_by(u_id =int(user_id)).first()
+   return Userlogin.query.filter_by(u_id =int(user_id)).first()
 
 
 @app.route("/logout")
