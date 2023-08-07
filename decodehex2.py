@@ -287,7 +287,7 @@ class BeaconFGB(HexError):
 
     def hexuin(self):
         if self.type =='uin':
-            return 'Message is a UIN'
+            return ''
         return self.hex15
 
     def getmtype(self):
