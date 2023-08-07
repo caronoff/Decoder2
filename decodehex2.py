@@ -21,7 +21,7 @@ SHORT_MSG = 'Short Msg'
 LONG_MSG = 'Long Msg'
 SHORT_OR_LONG_MSG = 'Short Msg/Long Msg'
 UIN = 'unique hexadecimal ID'
-UIN_DEFAULT=' is unique 15-Hex with defaulted bits 67-85'
+UIN_DEFAULT='If valid, the UIN would be '
 INVALID_HEX = '  Not a valid Hex ID'
 LOCATION_PROTOCOL_FLAG = 'Location, further information provided in "Protocol Code" '
 USER_PROTOCOL_FLAG = 'User, further information provided in "Protocol Code" '
@@ -1168,7 +1168,7 @@ class BeaconFGB(HexError):
                 if default == str(self.bin[67:86]):
                     valid = 'Valid'
                 else:
-                    valid = 'Not a valid uin (bits 67-85 not defaulted)'
+                    valid = 'Message not valid Unique Identifier Number (UIN) since bits 67-85 not defaulted'
                     self.errors.append(valid)
                 self.tablebin.append(['67-85', default, 'Default bits required', 'Defined by T.001 for Unique identifier'])
                 self.tablebin.append(['67-85', str(self.bin[67:86]), 'Default bits in hex', valid])
@@ -1183,7 +1183,7 @@ class BeaconFGB(HexError):
                 self.hex15 = Fcn.bin2hex(self.bin[26:67] + default)
 
                 #self.errors.append(Fcn.bin2hex(self.bin[26:86]) + INVALID_UIN )
-                self.errors.append(self.hex15 + UIN_DEFAULT)
+                self.errors.append(UIN_DEFAULT + self.hex15)
             else:
                 self.hex15 = Fcn.bin2hex(self.bin[26:67] + default )
 
