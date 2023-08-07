@@ -16,12 +16,13 @@ UIN = 'unique hexadecimal ID'
 BCH1='BCH-1 error correcting code'
 BCH2='BCH-2 error correcting code'
 BCH_ERRORS_PRESENT ='BCH errors present in message'
-INVALID_UIN =' (INVALID UIN) Per DDP section 4.2.1.1.4, due to errors in message, cannot construct valid UIN therefore bits 26-85 not defaulted'
+INVALID_UIN ='INVALID UIN'
 SHORT_MSG = 'Short Msg'
 LONG_MSG = 'Long Msg'
 SHORT_OR_LONG_MSG = 'Short Msg/Long Msg'
 UIN = 'unique hexadecimal ID'
-INVALID_HEX = 'Not a valid Hex ID'
+UIN_DEFAULT=' is unique 15-Hex with defaulted bits 67-85'
+INVALID_HEX = '  Not a valid Hex ID'
 LOCATION_PROTOCOL_FLAG = 'Location, further information provided in "Protocol Code" '
 USER_PROTOCOL_FLAG = 'User, further information provided in "Protocol Code" '
 
@@ -1173,9 +1174,16 @@ class BeaconFGB(HexError):
                 self.tablebin.append(['67-85', str(self.bin[67:86]), 'Default bits in hex', valid])
 
                 self._loc = False
+
+
             if self.errors:
-                self.hex15 = Fcn.bin2hex(self.bin[26:86]) #+ INVALID_UIN
-                self.errors.append(Fcn.bin2hex(self.bin[26:86]) + INVALID_UIN )
+                print(self.errors)
+                print(self.type)
+                #self.hex15 = Fcn.bin2hex(self.bin[26:86]) #+ INVALID_UIN
+                self.hex15 = Fcn.bin2hex(self.bin[26:67] + default)
+
+                #self.errors.append(Fcn.bin2hex(self.bin[26:86]) + INVALID_UIN )
+                self.errors.append(self.hex15 + UIN_DEFAULT)
             else:
                 self.hex15 = Fcn.bin2hex(self.bin[26:67] + default )
 
