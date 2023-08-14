@@ -21,7 +21,7 @@ SHORT_MSG = 'Short Msg'
 LONG_MSG = 'Long Msg'
 SHORT_OR_LONG_MSG = 'Short Msg/Long Msg'
 UIN = 'unique hexadecimal ID'
-UIN_DEFAULT='If valid, the UIN would be '
+UIN_DEFAULT='With the bits 67-85 defaulted, the UIN would be '
 INVALID_HEX = '  Not a valid Hex ID'
 LOCATION_PROTOCOL_FLAG = 'Location, further information provided in "Protocol Code" '
 USER_PROTOCOL_FLAG = 'User, further information provided in "Protocol Code" '
@@ -822,7 +822,7 @@ class BeaconFGB(HexError):
             elif typelocprotbin == '1110':                
                 self.tablebin.append(['41-64',str(self.bin[41:65]),'Test protocol','No Decode information in bits 41 to 64'])
 
-            if self.type not in ['uin','Short Msg']:
+            if self.type not in ['Short Msg']:
                 self.tablebin.append(['65-74',str(self.bin[65:75]),'Latitude','{} ({})'.format(lat,declat)])
                 self.tablebin.append(['75-85',str(self.bin[75:86]),'Longitude','{} ({})'.format(lng,declng)])
                 
@@ -861,6 +861,7 @@ class BeaconFGB(HexError):
                     self.errors.append(valid)
                 self.tablebin.append(['65-85',default,'Default bits required','Defined by T.001 for Unique identifier'])
                 self.tablebin.append(['65-85', str(self.bin[65:86]), 'Default bits in hex', valid])
+
                 self._loc=False
             if self.errors:
                 self.hex15 = Fcn.bin2hex(self.bin[26:86]) #+ INVALID_UIN
@@ -1168,7 +1169,7 @@ class BeaconFGB(HexError):
                 if default == str(self.bin[67:86]):
                     valid = 'Valid'
                 else:
-                    valid = 'Message not valid Unique Identifier Number (UIN) since bits 67-85 not defaulted'
+                    valid = 'The 15-Hex message is NOT a Unique Identifier Number (UIN) because bits 67-85 are not defaulted'
                     self.errors.append(valid)
                 self.tablebin.append(['67-85', default, 'Default bits required', 'Defined by T.001 for Unique identifier'])
                 self.tablebin.append(['67-85', str(self.bin[67:86]), 'Default bits in hex', valid])
