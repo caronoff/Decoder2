@@ -23,7 +23,7 @@ SHORT_OR_LONG_MSG = 'Short Msg/Long Msg'
 UIN = 'unique hexadecimal ID'
 UIN_DEFAULT='With the bits defaulted, the UIN would be '
 INVALID_HEX = '  Not a valid Hex ID'
-BITSNOTDEF='The 15-Hex message is NOT a Unique Identifier Number (UIN) because bits are not correct defaulted bits'
+BITSNOTDEF='This 15-Hex message is NOT a Unique Identifier Number (UIN) because bits are not correctly defaulted'
 LOCATION_PROTOCOL_FLAG = 'Location, further information provided in "Protocol Code" '
 USER_PROTOCOL_FLAG = 'User, further information provided in "Protocol Code" '
 
@@ -824,8 +824,8 @@ class BeaconFGB(HexError):
                 self.tablebin.append(['41-64',str(self.bin[41:65]),'Test protocol','No Decode information in bits 41 to 64'])
 
             if self.type not in ['uin','Short Msg']:
-                self.tablebin.append(['65-74',str(self.bin[65:75]),'Latitude','{} ({})'.format(lat,declat)])
-                self.tablebin.append(['75-85',str(self.bin[75:86]),'Longitude','{} ({})'.format(lng,declng)])
+                self.tablebin.append(['65-74',str(self.bin[65:75]),'Latitude (PDF-1)','{} ({})'.format(lat,declat)])
+                self.tablebin.append(['75-85',str(self.bin[75:86]),'Longitude (PDF-1)','{} ({})'.format(lng,declng)])
                 
                 if self.bin[107:111]=='1101':
                     computed='107-110 should be 1101'
@@ -868,8 +868,8 @@ class BeaconFGB(HexError):
                 lat, declat, latdir, ltminutes = Fcn.latitude(self.bin[65], self.bin[66:73], self.bin[73:75])
                 lng, declng, lngdir, lgminutes = Fcn.longitude(self.bin[75], self.bin[76:84], self.bin[84:86])
                 self.courseloc = (declat, declng)
-                self.tablebin.append(['65-74', str(self.bin[65:75]), 'Latitude', '{} ({})'.format(lat, declat)])
-                self.tablebin.append(['75-85', str(self.bin[75:86]), 'Longitude', '{} ({})'.format(lng, declng)])
+                self.tablebin.append(['65-74', str(self.bin[65:75]), 'Latitude (PDF-1)', '{} ({})'.format(lat, declat)])
+                self.tablebin.append(['75-85', str(self.bin[75:86]), 'Longitude (PDF-1)', '{} ({})'.format(lng, declng)])
 
 
                 self._loc=False
@@ -901,8 +901,8 @@ class BeaconFGB(HexError):
             lng,declng,lngdir,lgminutes =  Fcn.longitude(self.bin[72],self.bin[73:81],self.bin[81:86])
             self.courseloc=(declat,declng)
             if self.type not in ['uin', 'Short Msg']:
-                self.tablebin.append(['59-71',str(self.bin[59:72]),'Latitude','{} ({})'.format(lat,declat)])
-                self.tablebin.append(['72-85',str(self.bin[72:86]),'Longitude','{} ({})'.format(lng,declng)])
+                self.tablebin.append(['59-71',str(self.bin[59:72]),'Latitude (PDF-1)','{} ({})'.format(lat,declat)])
+                self.tablebin.append(['72-85',str(self.bin[72:86]),'Longitude (PDF-1)','{} ({})'.format(lng,declng)])
                 self.tablebin.append(['86-106',str(self.bin[86:107]),BCH1,str(self.bch.bch1calc()),definitions.moreinfo['bch1']])
                 if 'Error' in lng:
                     self.errors.append('Bad logitude location ' + lng)
@@ -969,8 +969,8 @@ class BeaconFGB(HexError):
                     self.errors.append(UIN_DEFAULT + Fcn.bin2hex(self.bin[26:59] + default))
                 #self.tablebin.append(['59-85',default,'Default bits required','Defined by T.001 for Unique identifier'])
                 #self.tablebin.append(['59-85', str(self.bin[59:86]), 'Default bits in hex', valid])
-                self.tablebin.append(['59-71', str(self.bin[59:72]), 'Latitude', '{} ({})'.format(lat, declat)])
-                self.tablebin.append(['72-85', str(self.bin[72:86]), 'Longitude', '{} ({})'.format(lng, declng)])
+                self.tablebin.append(['59-71', str(self.bin[59:72]), 'Latitude (PDF-1)', '{} ({})'.format(lat, declat)])
+                self.tablebin.append(['72-85', str(self.bin[72:86]), 'Longitude (PDF-1)', '{} ({})'.format(lng, declng)])
 
 
 
@@ -1013,8 +1013,8 @@ class BeaconFGB(HexError):
             lng,declng,lngdir =  Fcn.longitudeRLS(self.bin[76],self.bin[77:86])
             self.courseloc=(declat,declng)
             if self.type not in ['uin', 'Short Msg']:
-                self.tablebin.append(['67-75',str(self.bin[67:76]),'Latitude','{} ({})'.format(lat,declat)])
-                self.tablebin.append(['76-85',str(self.bin[76:86]),'Longitude','{} ({})'.format(lng,declng)])
+                self.tablebin.append(['67-75',str(self.bin[67:76]),'Latitude (PDF-1)','{} ({})'.format(lat,declat)])
+                self.tablebin.append(['76-85',str(self.bin[76:86]),'Longitude (PDF-1)','{} ({})'.format(lng,declng)])
                 self.tablebin.append(['86-106',str(self.bin[86:107]),BCH1,str(self.bch.bch1calc()),definitions.moreinfo['bch1']])
                 #self.tablebin.append(['107-108',str(self.bin[107:109]),'supplementary','supplementary'])
                 self._locd['encpos']=definitions.enc_delta_posflag[self.bin[107]]
@@ -1053,8 +1053,8 @@ class BeaconFGB(HexError):
 
 
                 if self.errors:
-                    self.tablebin.append(['67-75', str(self.bin[67:76]), 'Latitude', '{} ({})'.format(lat, declat)])
-                    self.tablebin.append(['76-85', str(self.bin[76:86]), 'Longitude', '{} ({})'.format(lng, declng)])
+                    self.tablebin.append(['67-75', str(self.bin[67:76]), 'Latitude (PDF-1)', '{} ({})'.format(lat, declat)])
+                    self.tablebin.append(['76-85', str(self.bin[76:86]), 'Longitude (PDF-1)', '{} ({})'.format(lng, declng)])
                 self._loc = False
 
             elif self.type=='Short Msg':
@@ -1137,8 +1137,8 @@ class BeaconFGB(HexError):
                         self.errors.append(lng)
 
 
-                    self.tablebin.append(['67-75',str(self.bin[67:76]),'Latitude','{} ({})'.format(lat,declat)])
-                    self.tablebin.append(['76-85',str(self.bin[76:86]),'Longitude','{} ({})'.format(lng,declng)])
+                    self.tablebin.append(['67-75',str(self.bin[67:76]),'Latitude (PDF-1)','{} ({})'.format(lat,declat)])
+                    self.tablebin.append(['76-85',str(self.bin[76:86]),'Longitude (PDF-1)','{} ({})'.format(lng,declng)])
                     self.tablebin.append(['86-106',str(self.bin[86:107]),BCH1,str(self.bch.bch1calc()),definitions.moreinfo['bch1']])
                     means = {'01':'automatic activation by the beacon','11':'spare','00':'manual activation by user','10':'automatic activation by external means'}
                     meansbin = str(self.bin[107:109])
@@ -1202,8 +1202,8 @@ class BeaconFGB(HexError):
                 #self.courseloc = (declat, declng)
 
 
-                self.tablebin.append(['67-75', str(self.bin[67:76]), 'Latitude', '{} ({})'.format(lat, declat)])
-                self.tablebin.append(['76-85', str(self.bin[76:86]), 'Longitude', '{} ({})'.format(lng, declng)])
+                self.tablebin.append(['67-75', str(self.bin[67:76]), 'Latitude (PDF-1)', '{} ({})'.format(lat, declat)])
+                self.tablebin.append(['76-85', str(self.bin[76:86]), 'Longitude (PDF-1)', '{} ({})'.format(lng, declng)])
 
                 self._loc = False
 
