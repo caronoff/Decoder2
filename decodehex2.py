@@ -23,7 +23,7 @@ SHORT_OR_LONG_MSG = 'Short Msg/Long Msg'
 UIN = 'unique hexadecimal ID'
 UIN_DEFAULT='With the bits defaulted, the UIN would be '
 INVALID_HEX = '  Not a valid Hex ID'
-BITSNOTDEF='This 15-Hex message is NOT a Unique Identifier Number (UIN) because bits are not correctly defaulted'
+BITSNOTDEF='This 15-Hex message is NOT a valid Unique Identifier Number (UIN) because location bits are not correctly defaulted'
 LOCATION_PROTOCOL_FLAG = 'Location, further information provided in "Protocol Code" '
 USER_PROTOCOL_FLAG = 'User, further information provided in "Protocol Code" '
 
@@ -289,6 +289,7 @@ class BeaconFGB(HexError):
     def hexuin(self):
         if self.type =='uin':
             return ''
+        print('h',self.hex15)
         return self.hex15
 
     def getmtype(self):
@@ -777,6 +778,7 @@ class BeaconFGB(HexError):
         #Standard Location protocols
         if typelocprotbin in definitions.stdloctypes : #['0010','0011','0100','0101','0110','0111','1100','1110']
             default = '011111111101111111111'
+            self.hex15 =  Fcn.bin2hex(self.bin[26:65] + default)
             if self.bch.bch1errors>0 or (self.bch.bch2errors>0 and int(self.bin[113:])!=0):
                 self.errors.append(BCH_ERRORS_PRESENT)
             self._loctype = "{}".format(definitions.locprottype[typelocprotbin])
@@ -861,12 +863,12 @@ class BeaconFGB(HexError):
                 else:
                     valid= BITSNOTDEF
                     self.errors.append(valid)
-                    self.errors.append(UIN_DEFAULT + self.bin[26:65] + default)
-                self.tablebin.append(['65-85',default,'Default bits required','Defined by T.001 for Unique identifier'])
-                self.tablebin.append(['65-85', str(self.bin[65:86]), 'Default bits in hex', valid])
-                latdelta, longdelta, ltoffset, lgoffset, signlat, signlong = Fcn.latlongresolution(self.bin, 113, 133)
-                lat, declat, latdir, ltminutes = Fcn.latitude(self.bin[65], self.bin[66:73], self.bin[73:75])
-                lng, declng, lngdir, lgminutes = Fcn.longitude(self.bin[75], self.bin[76:84], self.bin[84:86])
+                    self.errors.append(UIN_DEFAULT + Fcn.bin2hex(self.bin[26:65] + default))
+                #self.tablebin.append(['65-85',default,'Default bits required','Defined by T.001 for Unique identifier'])
+                #self.tablebin.append(['65-85', str(self.bin[65:86]), 'Default bits in hex', valid])
+                #latdelta, longdelta, ltoffset, lgoffset, signlat, signlong = Fcn.latlongresolution(self.bin, 113, 133)
+                #lat, declat, latdir, ltminutes = Fcn.latitude(self.bin[65], self.bin[66:73], self.bin[73:75])
+                #lng, declng, lngdir, lgminutes = Fcn.longitude(self.bin[75], self.bin[76:84], self.bin[84:86])
                 self.courseloc = (declat, declng)
                 self.tablebin.append(['65-74', str(self.bin[65:75]), 'Latitude (PDF-1)', '{} ({})'.format(lat, declat)])
                 self.tablebin.append(['75-85', str(self.bin[75:86]), 'Longitude (PDF-1)', '{} ({})'.format(lng, declng)])
@@ -891,7 +893,7 @@ class BeaconFGB(HexError):
             self.tablebin.append(['37-40',str(self.bin[37:41]),'Protocol Code','{} {}'.format(btype,self._loctype),definitions.moreinfo['natloc']])
 
             #59-85 default data 27 bit binary (to construct 15 Hex UIN when no location present)
-            #self.hex15=Fcn.bin2hex(self.bin[26:59]+default)
+            self.hex15=Fcn.bin2hex(self.bin[26:59]+default)
             #self.tablebin.append(['26-85',self.bin[26:59]+default,UIN,self.hex15])
             self._sn=str(Fcn.bin2dec(self.bin[41:59]))
 
@@ -980,6 +982,7 @@ class BeaconFGB(HexError):
         # RLS Location Protocol 
         elif typelocprotbin =='1101':
             default='0111111110111111111' #67-85 default 19 bit binary (to construct 15 Hex)
+
             if self.bch.bch1errors > 0 or self.bch.bch2errors > 0:
                 self.hex15 = Fcn.bin2hex(self.bin[26:86]) #+ INVALID_UIN
                 self.errors.append(BCH_ERRORS_PRESENT)
