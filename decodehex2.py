@@ -476,6 +476,7 @@ class BeaconFGB(HexError):
                 auxradiodevice='Aux Radio Device: '+self.bin[84:86]+' '+definitions.auxlocdevice[self.bin[84:86]]
                 self.tablebin.append(['44-61',str(self.bin[44:62]),'Aircraft Operator Designator',self._id])
                 self.tablebin.append(['62-73',str(self.bin[62:74]),'Serial No Assigned by Operator',self._sn])
+                self.tablebin.append(['74-83', str(self.bin[74:84]), 'TA Cert. or National Use (see bit 43):', tano])
             if susertype in ['111','101']:
                 if self.bin[43]=='1':
                     self.tablebin.append(['44-73',str(self.bin[44:74]),'Unknown Serial type','No information in T.001 to decode'])
