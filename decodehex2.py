@@ -970,8 +970,8 @@ class BeaconFGB(HexError):
                     valid= BITSNOTDEF
                     self.errors.append(valid)
                     self.errors.append(UIN_DEFAULT + Fcn.bin2hex(self.bin[26:59] + default))
-                #self.tablebin.append(['59-85',default,'Default bits required','Defined by T.001 for Unique identifier'])
-                #self.tablebin.append(['59-85', str(self.bin[59:86]), 'Default bits in hex', valid])
+                self.tablebin.append(['59-85',default,'Default bits required','Defined by T.001 for Unique identifier'])
+                self.tablebin.append(['59-85', str(self.bin[59:86]), 'Default bits in hex', valid])
                 self.tablebin.append(['59-71', str(self.bin[59:72]), 'Latitude (PDF-1)', '{} ({})'.format(lat, declat)])
                 self.tablebin.append(['72-85', str(self.bin[72:86]), 'Longitude (PDF-1)', '{} ({})'.format(lng, declng)])
 
@@ -1052,8 +1052,8 @@ class BeaconFGB(HexError):
                     self.errors.append(UIN_DEFAULT + Fcn.bin2hex(self.bin[26:67] + default))
 
 
-                #self.tablebin.append(['67-85', default, 'Default bits required', 'Defined by T.001 for Unique identifier'])
-                #self.tablebin.append(['67-85', str(self.bin[67:86]), 'Default bits in hex', valid])
+                self.tablebin.append(['67-85', default, 'Default bits required', 'Defined by T.001 for Unique identifier'])
+                self.tablebin.append(['67-85', str(self.bin[67:86]), 'Default bits in hex', valid])
 
 
                 if self.errors:
