@@ -194,11 +194,15 @@ def latlongresolution(binary,startpos,endpos):
             lndir='positive'
 
         if binary[startpos : startpos + 10] == '1000001111':
+            latminutes= 0
+            latseconds =0
             latoffset = DEFAULT
         else:
             latoffset = '{} minutes {} seconds ({})'.format(latminutes, latseconds, latdir)
 
         if binary[startpos + 10 : startpos + 20] == '1000001111':
+            longminutes=0
+            longseconds=0
             longoffset = DEFAULT
         else:
             longoffset = '{} minutes {} seconds ({})'.format(longminutes, longseconds, lndir)
@@ -223,11 +227,15 @@ def latlongresolution(binary,startpos,endpos):
             lndir = 'positive'
 
         if binary[startpos:startpos + 9] == '100001111':
+            latminutes= 0
+            latseconds =0
             latoffset = DEFAULT
         else:
             latoffset = '{} minutes {} seconds ({})'.format(latminutes, latseconds, latdir)
 
         if binary[startpos + 9:startpos + 18] == '100001111':
+            longminutes=0
+            longseconds=0
             longoffset = DEFAULT
         else:
             longoffset = '{} minutes {} seconds ({})'.format(longminutes, longseconds, lndir)
@@ -251,11 +259,15 @@ def latlongresolution(binary,startpos,endpos):
             lndir='positive'
 
         if binary[startpos : startpos + 7] == '1001111':
+            latminutes = 0
+            latseconds = 0
             latoffset = DEFAULT
         else:
             latoffset = '{} minutes {} seconds ({})'.format(latminutes, latseconds, latdir)
 
         if binary[startpos + 7 : startpos + 14] == '1001111':
+            longminutes=0
+            longseconds=0
             longoffset = DEFAULT
         else:
             longoffset = '{} minutes {} seconds ({})'.format(longminutes, longseconds, lndir)
