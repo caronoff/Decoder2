@@ -398,9 +398,9 @@ def binary(msg):
 @app.route("/decodedl",methods=['GET'])
 def decodedl():
     hexcode = str(request.args.get('hex_code'))
-    return decoded(hexcode,True)
+    return decoded(hexcode,True, 'encodehex')
 @app.route("/decoded/<hexcode>")
-def decoded(hexcode,locationinfo=False):
+def decoded(hexcode,locationinfo=False,backpage='decode'):
     flds = [('Organization','name'),
             ('Address','address'),
             ('City','city'),
@@ -480,7 +480,8 @@ def decoded(hexcode,locationinfo=False):
                                tacflds=tflds,
                                showmenu=MENU,
                                gmap_key=gmap_key,
-                               locationinfo=locationinfo)
+                               locationinfo=locationinfo,
+                               back=backpage)
     except (decodehex2.Gen2.Gen2Error or decodehex2.HexError) as err:  # decodehex2.HexError or
         print(err.value,err.message)
         return render_template('badhex.html',errortype=err.value,errormsg=err.message)
