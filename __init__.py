@@ -356,10 +356,7 @@ def longfirstgen():
 
     return render_template(renderform, hexcode=hexcodeUIN, ptype=ptype, form=form, error=error,showmenu=MENU)
 
-@app.route('/long',methods=['GET'])
-def long():
-    hexcode=str(request.args.get('hex_code'))
-    return redirect(url_for('decoded', hexcode=hexcode))
+
 
 ## correctbch
 @app.route("/correctbch/<hexcode>")
@@ -398,8 +395,12 @@ def decodedjson(hexcode):
 def binary(msg):
     return jsonify(testbchSGB.scramble_msg(msg))
 
+@app.route("/decodedl",methods=['GET'])
+def decodedl():
+    hexcode = str(request.args.get('hex_code'))
+    return decoded(hexcode,True)
 @app.route("/decoded/<hexcode>")
-def decoded(hexcode):
+def decoded(hexcode,locationinfo=False):
     flds = [('Organization','name'),
             ('Address','address'),
             ('City','city'),
@@ -478,7 +479,8 @@ def decoded(hexcode):
                                tacdetail=tacdic,
                                tacflds=tflds,
                                showmenu=MENU,
-                               gmap_key=gmap_key)
+                               gmap_key=gmap_key,
+                               locationinfo=locationinfo)
     except (decodehex2.Gen2.Gen2Error or decodehex2.HexError) as err:  # decodehex2.HexError or
         print(err.value,err.message)
         return render_template('badhex.html',errortype=err.value,errormsg=err.message)
