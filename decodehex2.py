@@ -634,9 +634,9 @@ class BeaconFGB(HexError):
 
         elif typeuserprotbin == '101':
 
-            self.errors.append('User protocol code bits 37-39 cannot be 101 for first generation beacon')
+            self.errors.append('Bits 37-39 set to 101 reserved for SGB inconsistent length of message')
             self.tablebin.append(['37-39',self.bin[37:40],'Protocol Code',self.type])
-
+            self.tablebin.append(['40-85', str(self.bin[40:86]), 'Reserved', 'Reserved for SGB'])
         if typeuserprotbin not in ['100','000','111'] and self.has_loc(): # and self.bch.complete=='1':
             location_data = 'Check for location'
 
@@ -1289,7 +1289,7 @@ class Beacon(HexError):
         elif len(hexcode) == 15:
             if Fcn.hextobin(hexcode)[0]=='1' and Fcn.hextobin(hexcode)[11:14]=='101':
                 self.gentype = 'secondtruncated'
-                beacon = Gen2.SecondGen(hexcode) # version 2.02 was padded with 8*'0' to make 23 size
+                beacon = Gen2.SecondGen(hexcode+'0'*8) # version 2.02 was padded with 8*'0' to make 23 size
                 self.genmsg = genmsgdic['15sgb']
             else:
                 self.gentype = 'first'
