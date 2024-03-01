@@ -271,13 +271,29 @@ def getmid():
 
 ## Encoder
 @app.route("/encodehex")
-
 def encodehex():
     countries=[]
     for key in definitions.countrydic:
         countries.append('{} ({})'.format(definitions.countrydic[key], key))
     countries.sort()
     return render_template("encodehexunique.html", countries=countries,showmenu=MENU)
+
+@app.route("/encodehex2")
+def encodehex2():
+    countries=[]
+    for key in definitions.countrydic:
+        countries.append('{} ({})'.format(definitions.countrydic[key], key))
+    countries.sort()
+    table=[['1','2','4'],['4','2','1'],['2','2','2']]
+    errors=['oops']
+    return render_template("encodeuin.html",
+                           countries=countries,
+                           showmenu=MENU,
+                           decoded=table,
+                           errors=errors,
+                           )
+
+
 
 @app.route('/processhex', methods=['GET'])
 def processhex():
