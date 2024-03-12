@@ -1388,7 +1388,13 @@ class Beacon(HexError):
 
     def loctype(self):
         return self.beacon.loctype()
+    def eltdt_id_type(self):
+        checkstr='ELT-DT Location Protocol'
+        if self.beacon.loctype()==checkstr:
+            return definitions.eltdt[str(self.beacon.bin[41:43])]
 
+        else:
+            return 'Beacon message protocol is not FGB ELT-DT'
     def fbits(self):
         return self.beacon.fbits()
 

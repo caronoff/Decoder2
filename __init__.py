@@ -606,6 +606,7 @@ def decoded_beacon(hexcode,fieldlst=[]):
                 'bch1_binarycalc':bch1_binarycalc(hexcode),
                 'bch2_binarycalc':bch2_binarycalc(hexcode),
                 'bch_valid':beacon.beacon.bch_valid,
+                'eltdt_id_type':beacon.eltdt_id_type(),
                 'kitchen_sink': beacon.tablebin
             }
     for fld in fieldlst:
