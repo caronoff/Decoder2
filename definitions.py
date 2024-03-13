@@ -835,9 +835,23 @@ gnss_status = {'00':'No fix',
                '10':'3D location',
                '11':'Reserved for future use'}
 
-triggering_event = {'0001':'Manual activation by the crew',
+triggering_event = {'0000':'Spare',
+                    '0001':'Manual activation by the crew',
+                    '0010': 'Spare',
+                    '0011': 'Spare',
                     '0100':'G-switch/deformation activation',
-                    '1000':'Automatic activation from avionics or triggering system'}
+                    '0101':'Spare',
+                    '0110':'Spare',
+                    '0111':'Spare',
+                    '1000':'Automatic activation from avionics or triggering system',
+                    '1001':'Spare',
+                    '1010':'Spare',
+                    '1011':'Spare',
+                    '1100':'Spare',
+                    '1101':'Spare',
+                    '1110':'Spare',
+                    '1111':'Spare'}
+
 
 inflight_battery = {'00':'<=9 hours autonomy remaining',
                     '01':'>9 and <=18 hours autonomy remaining',

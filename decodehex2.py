@@ -1394,7 +1394,22 @@ class Beacon(HexError):
             return definitions.eltdt[str(self.beacon.bin[41:43])]
 
         else:
-            return 'Beacon message protocol is not FGB ELT-DT'
+            return 'Beacon message protocol is not ELT-DT'
+
+
+    def eltdt_activation_type(self):
+        checkstr = 'ELT-DT Location Protocol'
+
+        if self.beacon.loctype() == checkstr and self.beacon.type!='uin':
+            return definitions.activation_note[str(self.beacon.bin[107:109])]
+        elif 'SGB' in self.beacon.loctype() and self.beacon.type!='uin':
+            if self.beacon.bits[155:159]=='0001':
+                return definitions.triggering_event[str(self.beacon.bin[186:190])]
+        else:
+            return 'Beacon message protocol is not ELT-DT in-flight triggering event'
+
+
+
     def fbits(self):
         return self.beacon.fbits()
 
