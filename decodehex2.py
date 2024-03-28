@@ -95,6 +95,10 @@ class Country:
         mid = Fcn.bin2dec(midbin)
         email_reg="unknown"
         s='Under construction'
+        try:
+            cname = definitions.countrydic[str(mid)]
+        except KeyError:
+            cname = 'Unknown MID'
         # try:
         #     cname = definitions.countrydic[str(mid)]
         #     url="https://api.406registration.com/poc/bymid/{}".format(str(mid))
