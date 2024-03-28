@@ -9,8 +9,8 @@ import definitions
 import time
 import bch1correct as bch1
 import bch2correct as bch2
-
-
+from urllib.request import urlopen
+import json
 
 UIN = 'unique hexadecimal ID'
 BCH1='BCH-1 error correcting code'
@@ -93,8 +93,32 @@ class HexError(Exception):
 class Country:
     def __init__(self, midbin):
         mid = Fcn.bin2dec(midbin)
+        email_reg="unknown"
+        s=''
         try:
             cname = definitions.countrydic[str(mid)]
+            url="https://api.406registration.com/poc/bymid/{}".format(str(mid))
+            response = urlopen(url)
+            data = json.loads(response.read())
+            try:
+                reg=data["REGCrossRef"]
+                reg=data["POCELT"]
+                alldata=data["references"]
+                for d in alldata:
+                    if d['_id']==reg:
+                        email_reg=d["email"]
+                        break
+            except:
+                email_reg='unknown'
+
+            try:
+                for d in alldata:
+                    if "ci_webpage_1" in d:
+                        s=d["ci_webpage_1"]
+                        break
+            except:
+                s=''
+
         except KeyError:
             cname = 'Unknown MID'
 
@@ -102,6 +126,8 @@ class Country:
         self._result = (('Country Code:', mid), ('Country Name:', cname))
         self.cname = "{} - {}".format(cname, mid)
         self.mid = mid
+        self.sref=s
+        self.email=email_reg
     def countrydata(self):
         s = ''
         for t in self._result:
@@ -251,6 +277,7 @@ class BeaconFGB(HexError):
 
         self.tablebin.append(['26',self.bin[26],'Protocol Flag',pflag])
         self.tablebin.append(['27-36',self.bin[27:37],'Country code:',self.countrydetail.cname,definitions.moreinfo['country_code']])
+        self.tablebin.append(['','Beacon Regulations',"For link to S.007 pertaining to {}".format(self.countrydetail.cname),'<a href={} target="_blank" > open S.007 here </a>'.format(self.countrydetail.sref)])
         self.tablebin.append(['', '', 'For associated SAR Points of Contact (SPOC) related to {} :'.format(self.countrydetail.cname), '<a href="https://cospas-sarsat.int/en/contacts-pro/contacts-details-all"  > Search Contact list here </a>'])
 
         if 'Unknown MID' in self.countrydetail.cname:
@@ -624,12 +651,14 @@ class BeaconFGB(HexError):
             if self.type!='uin':
                 self.tablebin.append(['86-106',str(self.bin[86:107]),BCH1,str(self.bch.bch1calc()),definitions.moreinfo['bch1']])
                 self.tablebin.append(['107-112',str(self.bin[107:113]),'Reserved','Reserved for national use'])
-            if self.type!='Short Msg' and int(self.bin[113:])!=0:
+            if self.type!='Short Msg' and int(self.bin[113:])!=0 and self.bin[113:]!='1'*32:
                 self.tablebin.append(['113-132',str(self.bin[113:133]),'Reserved','Reserved for national use'])
                 self.tablebin.append(['133-144',
                                       str(self.bin[133:145]),
                                           BCH2,
                                           str(self.bch.bch2calc()),definitions.moreinfo['bch2']])
+            elif self.type!='Short Msg'and self.bin[113:]=='1'*32:
+                self.tablebin.append(['113-144', str(self.bin[113:]), 'Truncated message detected', 'all 1s'])
             #self._loctype = 'User: {}'.format(definitions.userprottype[typeuserprotbin])
 
         elif typeuserprotbin == '101':
@@ -660,16 +689,22 @@ class BeaconFGB(HexError):
                 self.location=(a,b)
                 self.latitude=a
                 self.longitude=b
-                self.tablebin.append(['108-119',str(self.bin[108:120]),'Latitude','{} (decimal: {})'.format(lat,a)])
-                self.tablebin.append(['120-132',str(self.bin[120:133]),'Longitude','{} (decimal: {})'.format(lg,b)])
-                self.tablebin.append(['','','Resolved location','{} {}'.format(a,b)])
+                if self.bin[113:]!= '1'* 32:
+                    self.tablebin.append(['108-119',str(self.bin[108:120]),'Latitude','{} (decimal: {})'.format(lat,a)])
+                    self.tablebin.append(['120-132',str(self.bin[120:133]),'Longitude','{} (decimal: {})'.format(lg,b)])
+                    self.tablebin.append(['','','Resolved location','{} {}'.format(a,b)])
+                else:
+                    self.tablebin.append(['108-112', str(self.bin[108:113]),'Supplemental information'])
+                    self.tablebin.append(['113-144', str(self.bin[113:]), 'Truncated message detected','all 1s'])
+                    self.tablebin.append(['', '', 'Resolved location', '{} {}'.format('truncated', 'truncated')])
                 if 'Error' in lat or 'Error' in lg:
                     self.errors.append('Bad location information')
-
-                self.tablebin.append(['133-144',
+                if self.bin[113:] != '1' * 32:
+                    self.tablebin.append(['133-144',
                                       str(self.bin[133:145]),
                                           BCH2,
                                           str(self.bch.bch2calc()),definitions.moreinfo['bch2']])
+
         
         self._btype=btype
         self.tac=str(tano)
@@ -853,9 +888,13 @@ class BeaconFGB(HexError):
                                           definitions.homer[self.bin[112]]])
                 self.encpos=str(self.bin[111])
                 #if int(self.bin[113:]) != 0 :
-                self.tablebin.append(['113-122',str(self.bin[113:123]),'Latitude offset', ltoffset])
-                self.tablebin.append(['123-132', str(self.bin[123:133]),'Longitude offset', lgoffset])
-                self.tablebin.append(['133-144', str(self.bin[133:145]),BCH2, str(self.bch.bch2calc()),definitions.moreinfo['bch2']])
+                if self.bin[113:] != '1' * 32:
+                    self.tablebin.append(['113-122',str(self.bin[113:123]),'Latitude offset', ltoffset])
+                    self.tablebin.append(['123-132', str(self.bin[123:133]),'Longitude offset', lgoffset])
+                    self.tablebin.append(['133-144', str(self.bin[133:145]),BCH2, str(self.bch.bch2calc()),definitions.moreinfo['bch2']])
+                else:
+                    self.tablebin.append(['113-144', str(self.bin[113:]), 'Truncated message detected', 'all 1s'])
+
             
             elif self.type=='uin':
                 if default==str(self.bin[65:86]):
@@ -1040,9 +1079,13 @@ class BeaconFGB(HexError):
                 self.tablebin.append(['113-114', str(self.bin[113:115]), 'RLS Provider Identification', {'00':'Spare','11':'Spare','01':'GALILEO Return Link Service Provider','10':'GLONASS Return Link Service Provider'}[str(self.bin[113:115])]])
 
                 latdelta,longdelta,ltoffset,lgoffset,signlat,signlong = Fcn.latlongresolution(self.bin,115,133)
-                self.tablebin.append(['115-123',str(self.bin[115:124]),'Latitude offset',ltoffset])
-                self.tablebin.append(['124-132',str(self.bin[124:133]),'Longitude offset',lgoffset])
-                self.tablebin.append(['133-144',str(self.bin[133:145]),BCH2, str(self.bch.bch2calc()),definitions.moreinfo['bch2']])
+                if self.bin[113:]!='1'*32:
+                    self.tablebin.append(['115-123',str(self.bin[115:124]),'Latitude offset',ltoffset])
+                    self.tablebin.append(['124-132',str(self.bin[124:133]),'Longitude offset',lgoffset])
+                    self.tablebin.append(['133-144',str(self.bin[133:145]),BCH2, str(self.bch.bch2calc()),definitions.moreinfo['bch2']])
+                else:
+                    self.tablebin.append(['113-144', str(self.bin[113:]), 'Truncated message detected', 'all 1s'])
+
             elif self.type=='uin':
                 if default == str(self.bin[67:86]):
                     valid = 'Valid'
@@ -1161,10 +1204,13 @@ class BeaconFGB(HexError):
                     self.tablebin.append(['113-114', enc_freshbin, 'Encoded location freshness or PDF-2 rotating field indicator', enc_loc_fresh[enc_freshbin]])
 
                     if enc_freshbin!='00':
+                        if self.bin[113:]!='1'*32:
+                            latdelta,longdelta,ltoffset,lgoffset,signlat,signlong = Fcn.latlongresolution(self.bin,115,133)
+                            self.tablebin.append(['115-123',str(self.bin[115:124]),'Latitude offset',ltoffset])
+                            self.tablebin.append(['124-132',str(self.bin[124:133]),'Longitude offset',lgoffset])
+                        else:
+                            self.tablebin.append(['113-144', str(self.bin[113:]), 'Truncated message detected', 'all 1s'])
 
-                        latdelta,longdelta,ltoffset,lgoffset,signlat,signlong = Fcn.latlongresolution(self.bin,115,133)
-                        self.tablebin.append(['115-123',str(self.bin[115:124]),'Latitude offset',ltoffset])
-                        self.tablebin.append(['124-132',str(self.bin[124:133]),'Longitude offset',lgoffset])
 
                     elif enc_freshbin=='00':
                         # for rotating field designator
@@ -1187,8 +1233,8 @@ class BeaconFGB(HexError):
                             ldtype = 'Spare'
                             self.tablebin.append(['115-117', str(self.bin[115:118]), 'Aircraft operator 3LD designator or Spare',ldtype])
                             self.tablebin.append(['118-132', str(self.bin[118:133]), 'Spare','Reserved for future development'])
-
-                    self.tablebin.append(['133-144', str(self.bin[133:145]), BCH2, str(self.bch.bch2calc()),definitions.moreinfo['bch2']])
+                    if self.bin[113:] != '1' * 32:
+                        self.tablebin.append(['133-144', str(self.bin[133:145]), BCH2, str(self.bch.bch2calc()),definitions.moreinfo['bch2']])
 
 
             elif self.type=='uin':
@@ -1235,6 +1281,10 @@ class BeaconFGB(HexError):
             b=self.update_locd((abs(declng)+longdelta),lngdir)
         else:
             self._loc=False
+            a=declat
+            b=declng
+
+        if self.bin[113:]=='1'*32:
             a=declat
             b=declng
 
