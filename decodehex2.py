@@ -95,38 +95,27 @@ class Country:
         mid = Fcn.bin2dec(midbin)
         email_reg="unknown"
         s='Under construction'
+        url = "https://api.406registration.com/poc/bymid/{}".format(str(mid))
         try:
             cname = definitions.countrydic[str(mid)]
         except KeyError:
             cname = 'Unknown MID'
         # try:
-        #     cname = definitions.countrydic[str(mid)]
-        #     url="https://api.406registration.com/poc/bymid/{}".format(str(mid))
         #     response = urlopen(url)
         #     data = json.loads(response.read())
-        #     try:
-        #         reg=data["REGCrossRef"]
-        #         reg=data["POCELT"]
-        #         alldata=data["references"]
-        #         for d in alldata:
-        #             if d['_id']==reg:
-        #                 email_reg=d["email"]
+        #     alldata = data["references"]
+        #     for d in alldata:
+        #         if "ci_webpage_1" in d:
+        #             s=d["ci_webpage_1"]
+        #             if len(s):
         #                 break
-        #     except:
-        #         email_reg='unknown'
-        #
-        #     try:
-        #         for d in alldata:
-        #             if "ci_webpage_1" in d:
-        #                 s=d["ci_webpage_1"]
-        #                 break
-        #     except:
-        #         s=''
-        #
-        # except KeyError:
-        #     cname = 'Unknown MID'
+        # except:
+        #     s=''
 
-        #self.result = 'Country Code (bits 27-36) :({b})  Decimal: {d}   Name: {n}.'.format(b=midbin,d=mid,n=cname)
+
+
+
+
         self._result = (('Country Code:', mid), ('Country Name:', cname))
         self.cname = "{} - {}".format(cname, mid)
         self.mid = mid
@@ -281,7 +270,7 @@ class BeaconFGB(HexError):
 
         self.tablebin.append(['26',self.bin[26],'Protocol Flag',pflag])
         self.tablebin.append(['27-36',self.bin[27:37],'Country code:',self.countrydetail.cname,definitions.moreinfo['country_code']])
-        self.tablebin.append(['','Beacon Regulations',"For link to S.007 pertaining to {}".format(self.countrydetail.cname),'<a href={} target="_blank" > open S.007 here </a>'.format(self.countrydetail.sref)])
+        #self.tablebin.append(['','Beacon Regulations',"For link to S.007 pertaining to {}".format(self.countrydetail.cname),'<a href={} target="_blank" > open S.007 here </a>'.format(self.countrydetail.sref)])
         self.tablebin.append(['', '', 'For associated SAR Points of Contact (SPOC) related to {} :'.format(self.countrydetail.cname), '<a href="https://cospas-sarsat.int/en/contacts-pro/contacts-details-all"  > Search Contact list here </a>'])
 
         if 'Unknown MID' in self.countrydetail.cname:
@@ -575,12 +564,15 @@ class BeaconFGB(HexError):
                 self.tablebin.append(['107-112', str(self.bin[107:113]), 'Reserved', 'Reserved for test use'])
 
 
-            if self.type!='Short Msg' and int(self.bin[113:])!=0:
-                self.tablebin.append(['113-132',str(self.bin[113:133]),'Test','Reserved for test use'])
+
+            if self.type != 'Short Msg' and int(self.bin[113:]) != 0 and self.bin[113:] != '1' * 32:
+                self.tablebin.append(['113-132', str(self.bin[113:133]), 'Reserved', 'Reserved for test use'])
                 self.tablebin.append(['133-144',
                                       str(self.bin[133:145]),
-                                          BCH2,
-                                          str(self.bch.bch2calc()),definitions.moreinfo['bch2']])
+                                      BCH2,
+                                      str(self.bch.bch2calc()), definitions.moreinfo['bch2']])
+            elif self.type != 'Short Msg' and self.bin[113:] == '1' * 32:
+                self.tablebin.append(['113-144', str(self.bin[113:]), 'Truncated message detected', 'all 1s'])
 
             self._loctype = 'User: Test User'
 
