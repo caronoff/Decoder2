@@ -94,33 +94,33 @@ class Country:
     def __init__(self, midbin):
         mid = Fcn.bin2dec(midbin)
         email_reg="unknown"
-        s=''
-        try:
-            cname = definitions.countrydic[str(mid)]
-            url="https://api.406registration.com/poc/bymid/{}".format(str(mid))
-            response = urlopen(url)
-            data = json.loads(response.read())
-            try:
-                reg=data["REGCrossRef"]
-                reg=data["POCELT"]
-                alldata=data["references"]
-                for d in alldata:
-                    if d['_id']==reg:
-                        email_reg=d["email"]
-                        break
-            except:
-                email_reg='unknown'
-
-            try:
-                for d in alldata:
-                    if "ci_webpage_1" in d:
-                        s=d["ci_webpage_1"]
-                        break
-            except:
-                s=''
-
-        except KeyError:
-            cname = 'Unknown MID'
+        s='Under construction'
+        # try:
+        #     cname = definitions.countrydic[str(mid)]
+        #     url="https://api.406registration.com/poc/bymid/{}".format(str(mid))
+        #     response = urlopen(url)
+        #     data = json.loads(response.read())
+        #     try:
+        #         reg=data["REGCrossRef"]
+        #         reg=data["POCELT"]
+        #         alldata=data["references"]
+        #         for d in alldata:
+        #             if d['_id']==reg:
+        #                 email_reg=d["email"]
+        #                 break
+        #     except:
+        #         email_reg='unknown'
+        #
+        #     try:
+        #         for d in alldata:
+        #             if "ci_webpage_1" in d:
+        #                 s=d["ci_webpage_1"]
+        #                 break
+        #     except:
+        #         s=''
+        #
+        # except KeyError:
+        #     cname = 'Unknown MID'
 
         #self.result = 'Country Code (bits 27-36) :({b})  Decimal: {d}   Name: {n}.'.format(b=midbin,d=mid,n=cname)
         self._result = (('Country Code:', mid), ('Country Name:', cname))
