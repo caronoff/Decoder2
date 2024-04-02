@@ -15,6 +15,7 @@ from bchcorrect import bch_check, bch_recalc, bch1_binarycalc, bch2_binarycalc
 import re, uuid
 import os, json #, boto3
 import contacts
+import contacts2
 import typeapproval
 import decodehex2
 import definitions
@@ -521,6 +522,13 @@ def contact(num):
     flds=['name','address','city','zipcode','telephone1','telephone2','ci_webpage_1','website_url']
     types = ['PLB','ELT','EPIRB']
     return render_template("contact.html",contact=contacts.contact(num,flds,types),types=types,flds=flds,showmenu=MENU)
+
+
+@app.route("/contactdetail/<midcode>")
+def contactdetail(midcode):
+    flds = ['_id','name','address','city','telephone1','email','email2', 'website_url']
+    types = ['POCCrossRef','REGCrossRef','REGEPIRB','POCELT','POCPLB']
+    return render_template("contact.html", contact=contacts2.contact(midcode, flds, types), types=types, flds=flds,showmenu=MENU)
 
 
 @app.route("/whereregister/<hexcode>")

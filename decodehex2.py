@@ -272,6 +272,7 @@ class BeaconFGB(HexError):
         self.tablebin.append(['27-36',self.bin[27:37],'Country code:',self.countrydetail.cname,definitions.moreinfo['country_code']])
         #self.tablebin.append(['','Beacon Regulations',"For link to S.007 pertaining to {}".format(self.countrydetail.cname),'<a href={} target="_blank" > open S.007 here </a>'.format(self.countrydetail.sref)])
         self.tablebin.append(['', '', 'For associated SAR Points of Contact (SPOC) related to {} :'.format(self.countrydetail.cname), '<a href="https://cospas-sarsat.int/en/contacts-pro/contacts-details-all"  > Search Contact list here </a>'])
+        #self.tablebin.append(['', '', 'For Beacon Registration Points of Contact related to {} :'.format(self.countrydetail.cname),'''<a href={} onClick='window.open(this.href, "new", "popup",width=400, height=300); return false;' > View Contact list here </a>'''.format('/contactdetail/'+str(self.countrydetail.mid))])
 
         if 'Unknown MID' in self.countrydetail.cname:
             self.errors.append('Unknown Country Code')
