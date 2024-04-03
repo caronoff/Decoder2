@@ -1446,8 +1446,9 @@ class Beacon(HexError):
 
     def eltdt_activation_type(self):
         checkstr = 'ELT-DT Location Protocol'
-
-        if self.beacon.loctype() == checkstr and self.beacon.type!='uin':
+        if self.beacon.loctype() == checkstr and self.beacon.type!='uin' and str(self.beacon.bin[107:133]) == '00111100011110000011110000':
+            return 'na'
+        elif self.beacon.loctype() == checkstr and self.beacon.type!='uin':
             return definitions.activation_note[str(self.beacon.bin[107:109])]
         elif 'SGB' in self.beacon.loctype() and self.beacon.type!='uin':
             if self.beacon.bits[155:159]=='0001':
