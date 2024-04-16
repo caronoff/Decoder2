@@ -1452,7 +1452,7 @@ class Beacon(HexError):
             return definitions.activation_note[str(self.beacon.bin[107:109])]
         elif 'SGB' in self.beacon.loctype() and self.beacon.type!='uin':
             if self.beacon.bits[155:159]=='0001':
-                return definitions.triggering_event[str(self.beacon.bin[186:190])]
+                return definitions.triggering_event[str(self.beacon.bits[186:190])]
         else:
             return 'Beacon message protocol is not ELT-DT in-flight triggering event'
 
