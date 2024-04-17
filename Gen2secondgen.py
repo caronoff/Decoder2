@@ -76,7 +76,7 @@ class SecondGen(Gen2Error):
 
         if len(self.bits) == 252 or len(self.bits) == 204 :
             self.type="Complete SGB message"
-            self.sgb_spare_bits = self.bits[141:155]
+            #self.sgb_spare_bits = self.bits[141:155]
             pbit=self.bits[0:2]
             self.pbit=pbit
             if pbit=='00':
@@ -91,6 +91,7 @@ class SecondGen(Gen2Error):
             self.tablebin.append(['Left pad', pbit, '', padding])
             ##Add an additional bit to ensure that bits in array line up with bits in documentation and only include important bits 1-202
             self.bits = "0" + self.bits[2:]
+            self.sgb_spare_bits = self.bits[141:155]
             ##Add the 23 Hex ID to our table
             self.beaconHexID = self.uinSgb()
             #self.tablebin.append(['','','Beacon 23 Hex ID:',self.beaconHexID])
