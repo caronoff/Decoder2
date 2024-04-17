@@ -605,7 +605,7 @@ def decoded_beacon(hexcode,fieldlst=[]):
                 'bch_recompute' : bch_recalc(hexcode),
                 'beacon_id' : beacon.get_id(),
                 'vessel_id' : beacon.get_id(),
-                'beacon_sn' : beacon.get_sn(),
+                'beacon_sn' : str(beacon.get_sn()),
                 '3ld' : beacon.threeletter,
                 'threeLD' : beacon.threeletter,
                 'altitude': beacon.beacon.altitude,
