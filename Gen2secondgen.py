@@ -29,6 +29,7 @@ class SecondGen(Gen2Error):
         self.validhex=True
         self.cancellation = False
         self.sgb_spare_bits = 'na'
+        self.vesselID=''
         if hexCode:
             self.processHex(hexCode)
 

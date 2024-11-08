@@ -566,6 +566,7 @@ def decoded_beacon(hexcode,fieldlst=[]):
 
     try:
         beacon = decodehex2.Beacon(hexcode)
+
         #res = db.get_item(Key={'id': 'counter'})
         #value = res['Item']['counter_value'] + 1
         #res = db.update_item(Key={'id': 'counter'}, UpdateExpression='set counter_value=:value',

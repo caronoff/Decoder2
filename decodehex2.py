@@ -1334,14 +1334,20 @@ class Beacon(HexError):
             self.genmsg = genmsgdic['23']
 
         elif len(hexcode) == 15:
-            if Fcn.hextobin(hexcode)[0]=='1' and Fcn.hextobin(hexcode)[11:14]=='101':
-                self.gentype = 'secondtruncated'
-                beacon = Gen2.SecondGen(hexcode+'0'*8) # version 2.02 was padded with 8*'0' to make 23 size
-                self.genmsg = genmsgdic['15sgb']
-            else:
-                self.gentype = 'first'
-                beacon = BeaconFGB(hexcode)
-                self.genmsg = genmsgdic['15']+' Computed Checksum : '+Fcn.getFiveCharChecksum(hexcode)
+            self.gentype = 'first'
+            beacon = BeaconFGB(hexcode)
+            self.genmsg = genmsgdic['15'] + ' Computed Checksum : ' + Fcn.getFiveCharChecksum(hexcode)
+
+            # if Fcn.hextobin(hexcode)[0]=='1' and Fcn.hextobin(hexcode)[11:14]=='101':
+            #     self.gentype = 'secondtruncated'
+            #     beacon = Gen2.SecondGen(hexcode+'0'*8) # version 2.02 was padded with 8*'0' to make 23 size
+            #     self.genmsg = genmsgdic['15sgb']
+            # else:
+            #     self.gentype = 'first'
+            #     beacon = BeaconFGB(hexcode)
+            #     self.genmsg = genmsgdic['15']+' Computed Checksum : '+Fcn.getFiveCharChecksum(hexcode)
+            #
+
 
         elif len(hexcode) == 30 :
             beacon=BeaconFGB(hexcode)
